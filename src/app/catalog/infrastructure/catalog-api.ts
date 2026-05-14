@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BaseApi } from '../../shared/infrastructure/base-api';
-//import { Course } from '../domain/model/course.entity';
+import { Type } from '../domain/model/type.entity';
 import { Category } from '../domain/model/category.entity';
 import { HttpClient } from '@angular/common/http';
-//import { CoursesApiEndpoint } from './courses-api-endpoint';
+import { TypesApiEndpoint } from './types-api-endpoint';
 import { CategoriesApiEndpoint } from './categories-api-endpoint';
 import { Observable } from 'rxjs';
 
@@ -11,47 +11,43 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class CatalogApi extends BaseApi {
- // private readonly coursesEndpoint: CoursesApiEndpoint;
+  private readonly typesEndpoint: TypesApiEndpoint;
   private readonly categoriesEndpoint: CategoriesApiEndpoint;
 
   constructor(http: HttpClient) {
     super();
-    //this.coursesEndpoint = new CoursesApiEndpoint(http);
+    this.typesEndpoint = new TypesApiEndpoint(http);
     this.categoriesEndpoint = new CategoriesApiEndpoint(http);
   }
 
   /**
-   * Retrieves all courses from the API.
-   * @returns An Observable for an array of Course objects.
-   */
-
-
-  /**
-   * Retrieves a single course by ID.
-   * @param id - The ID of the course.
-   * @returns An Observable of the Course object.
-   */
-
-
-  /**
-   * Creates a new course.
-   * @param course - The course to create.
-   * @returns An Observable of the created Course object.
+   * Retrieves all types from the API.
+   * @returns An Observable for an array of Type objects.
    */
 
   /**
-   * Updates an existing course.
-   * @param course - The course to update.
-   * @returns An Observable of the updated Course object.
+   * Retrieves a single type by ID.
+   * @param id - The ID of the type.
+   * @returns An Observable of the Type object.
    */
 
+  /**
+   * Creates a new type.
+   * @param type - The type to create.
+   * @returns An Observable of the created Type object.
+   */
 
   /**
-   * Deletes a course by ID.
-   * @param id - The ID of the course to delete.
+   * Updates an existing type.
+   * @param type - The type to update.
+   * @returns An Observable of the updated Type object.
+   */
+
+  /**
+   * Deletes a type by ID.
+   * @param id - The ID of the type to delete.
    * @returns An Observable of void.
    */
-
 
   /**
    * Retrieves all categories from the API.
@@ -95,5 +91,45 @@ export class CatalogApi extends BaseApi {
    */
   deleteCategory(id: number): Observable<void> {
     return this.categoriesEndpoint.delete(id);
+  }
+
+  getTypes(): Observable<Type[]> {
+    return this.typesEndpoint.getAll();
+  }
+
+  /**
+   * Retrieves a single type by ID.
+   * @param id - The ID of the type.
+   * @returns An Observable of the Type object.
+   */
+  getType(id: number): Observable<Type> {
+    return this.typesEndpoint.getById(id);
+  }
+
+  /**
+   * Creates a new type.
+   * @param type - The type to create.
+   * @returns An Observable of the created Type object.
+   */
+  createType(type: Type): Observable<Type> {
+    return this.typesEndpoint.create(type);
+  }
+
+  /**
+   * Updates an existing type.
+   * @param type - The type to update.
+   * @returns An Observable of the updated Type object.
+   */
+  updateType(type: Type): Observable<Type> {
+    return this.typesEndpoint.update(type, type.id);
+  }
+
+  /**
+   * Deletes a type by ID.
+   * @param id - The ID of the type to delete.
+   * @returns An Observable of void.
+   */
+  deleteType(id: number): Observable<void> {
+    return this.typesEndpoint.delete(id);
   }
 }

@@ -21,4 +21,5 @@ export class Category implements BaseEntity {
   set name(value: string) {
     this._name = value;
   }
+
 }

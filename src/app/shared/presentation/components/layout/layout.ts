@@ -27,6 +27,6 @@ export class Layout {
     { link: '/home', label: 'option.home' },
     { link: '/about', label: 'option.about' },
     { link: '/catalog/categories', label: 'option.categories' },
-    //{ link: '/learning/courses', label: 'option.courses' },
+    { link: '/catalog/types', label: 'option.types' },
   ];
 }

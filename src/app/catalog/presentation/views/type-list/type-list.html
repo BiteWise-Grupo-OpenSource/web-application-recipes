@@ -1,0 +1,38 @@
+@if (store.loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+}
+@if (store.error()) {
+  <mat-error>{{ store.error() }}</mat-error>
+}
+<table mat-table [dataSource]="store.types()" class="mat-elevation-z8">
+  <!-- ID Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let type"> {{ type.id }} </td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let type"> {{ type.name }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef> Description </th>
+    <td mat-cell *matCellDef="let type"> {{ type.description }} </td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let type">
+      <button mat-button (click)="editType(type.id)">Edit</button>
+      <button mat-button (click)="deleteType(type.id)">Delete</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<button mat-raised-button color="primary" (click)="router.navigate(['catalog/types/new'])">Add Type</button>
