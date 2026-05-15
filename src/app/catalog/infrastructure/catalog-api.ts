@@ -11,6 +11,8 @@ import { CategoriesApiEndpoint } from './categories-api-endpoint';
 import { NutrientsApiEndpoint } from './nutrients-api-endpoint';
 import { RecipesApiEndpoint } from './recipes-api-endpoint';
 import { IngredientsApiEndpoint } from './ingredients-api-endpoint';
+import { IngredientQuantitiesApiEndpoint } from './ingredient-quantities-api-endpoint';
+import { IngredientQuantity } from '../domain/model/ingredient-quantity.entity';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -22,6 +24,7 @@ export class CatalogApi extends BaseApi {
   private readonly nutrientsEndpoint: NutrientsApiEndpoint;
   private readonly recipesEndpoint: RecipesApiEndpoint;
   private readonly ingredientsEndpoint: IngredientsApiEndpoint;
+  private readonly ingredientQuantitiesEndpoint: IngredientQuantitiesApiEndpoint;
 
   constructor(http: HttpClient) {
     super();
@@ -30,6 +33,7 @@ export class CatalogApi extends BaseApi {
     this.nutrientsEndpoint = new NutrientsApiEndpoint(http);
     this.recipesEndpoint = new RecipesApiEndpoint(http);
     this.ingredientsEndpoint = new IngredientsApiEndpoint(http);
+    this.ingredientQuantitiesEndpoint = new IngredientQuantitiesApiEndpoint(http);
   }
 
   /**
@@ -234,5 +238,26 @@ export class CatalogApi extends BaseApi {
 
   deleteIngredient(id: number): Observable<void> {
     return this.ingredientsEndpoint.delete(id);
+  }
+
+  // IngredientQuantities endpoints
+  getIngredientQuantities(): Observable<IngredientQuantity[]> {
+    return this.ingredientQuantitiesEndpoint.getAll();
+  }
+
+  getIngredientQuantity(id: number): Observable<IngredientQuantity> {
+    return this.ingredientQuantitiesEndpoint.getById(id);
+  }
+
+  createIngredientQuantity(quantity: IngredientQuantity): Observable<IngredientQuantity> {
+    return this.ingredientQuantitiesEndpoint.create(quantity);
+  }
+
+  updateIngredientQuantity(quantity: IngredientQuantity): Observable<IngredientQuantity> {
+    return this.ingredientQuantitiesEndpoint.update(quantity, quantity.id);
+  }
+
+  deleteIngredientQuantity(id: number): Observable<void> {
+    return this.ingredientQuantitiesEndpoint.delete(id);
   }
 }

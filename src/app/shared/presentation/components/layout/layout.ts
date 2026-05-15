@@ -31,5 +31,6 @@ export class Layout {
     { link: '/catalog/nutrients', label: 'option.nutrients' },
     { link: '/catalog/recipes', label: 'option.recipes' },
     { link: '/catalog/ingredients', label: 'option.ingredients' },
+    { link: '/catalog/ingredient-quantities', label: 'option.ingredientQuantities' },
   ];
 }

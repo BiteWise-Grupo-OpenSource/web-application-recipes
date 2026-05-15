@@ -6,5 +6,6 @@ export const environment = {
   platformProviderRecipesEndpointPath: '/recipes',
   platformProviderTypesEndpointPath: '/recipeTypes',
   platformProviderNutrientsEndpointPath: '/macronutrientValues',
+  platformProviderIngredientQuantitiesEndpointPath: '/ingredientQuantities',
   logoProviderApiBaseUrl: 'https://logo.clearbit.com/',
 };

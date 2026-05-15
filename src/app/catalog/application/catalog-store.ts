@@ -19,13 +19,16 @@ export class CatalogStore {
   private readonly nutrientsSignal = signal<Nutrient[]>([]);
   private readonly recipesSignal = signal<Recipe[]>([]);
   private readonly ingredientsSignal = signal<Ingredient[]>([]);
+  private readonly ingredientQuantitiesSignal = signal<any[]>([]);
 
   readonly categories = this.categoriesSignal.asReadonly();
   readonly types = this.typesSignal.asReadonly();
   readonly nutrients = this.nutrientsSignal.asReadonly();
   readonly recipes = this.recipesSignal.asReadonly();
   readonly ingredients = this.ingredientsSignal.asReadonly();
+  readonly ingredientQuantities = this.ingredientQuantitiesSignal.asReadonly();
 
+  
   private readonly loadingSignal = signal<boolean>(false);
   readonly loading = this.loadingSignal.asReadonly();
 
@@ -44,6 +47,7 @@ export class CatalogStore {
     this.loadNutrients();
     this.loadRecipes();
     this.loadIngredients();
+    this.loadIngredientQuantities();
   }
 
   /**
@@ -69,6 +73,10 @@ export class CatalogStore {
 
   getIngredientById(id: number | null | undefined): Signal<Ingredient | undefined> {
     return computed(() => (id ? this.ingredients().find((c) => c.id === id) : undefined));
+  }
+
+  getIngredientQuantityById(id: number | null | undefined): Signal<any | undefined> {
+    return computed(() => (id ? this.ingredientQuantities().find((q) => q.id === id) : undefined));
   }
 
   /**
@@ -288,6 +296,27 @@ export class CatalogStore {
       });
   }
 
+  private loadIngredientQuantities(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .getIngredientQuantities()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (quantities) => {
+          this.ingredientQuantitiesSignal.set(quantities);
+          // try to assign links to ingredient and recipe
+          this.assignIngredientsToQuantities();
+          this.assignRecipesToQuantities();
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to load ingredient quantities'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
   private assignCategoriesToIngredients(): void {
     const categories = this.categories();
     if (!categories || categories.length === 0) return;
@@ -333,6 +362,42 @@ export class CatalogStore {
         },
         error: (err) => {
           this.errorSignal.set(this.formatError(err, 'Failed to create ingredient'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
+  addIngredientQuantity(quantity: any): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .createIngredientQuantity(quantity)
+      .pipe(retry(2))
+      .subscribe({
+        next: (created) => {
+          this.ingredientQuantitiesSignal.update((items) => [...items, created]);
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to create ingredient quantity'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
+  updateIngredientQuantity(updatedQuantity: any): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .updateIngredientQuantity(updatedQuantity)
+      .pipe(retry(2))
+      .subscribe({
+        next: (qty) => {
+          this.ingredientQuantitiesSignal.update((items) => items.map((item) => (item.id === qty.id ? qty : item)));
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to update ingredient quantity'));
           this.loadingSignal.set(false);
         },
       });
@@ -456,6 +521,34 @@ export class CatalogStore {
     );
   }
 
+  private assignIngredientsToQuantities(): void {
+    const ingredients = this.ingredients();
+    if (!ingredients || ingredients.length === 0) return;
+    this.ingredientQuantitiesSignal.update((items) =>
+      items.map((q) => {
+        if (!q.ingredient) {
+          const found = ingredients.find((ing) => ing.id === q.ingredientId) ?? null;
+          q.ingredient = found;
+        }
+        return q;
+      }),
+    );
+  }
+
+  private assignRecipesToQuantities(): void {
+    const recipes = this.recipes();
+    if (!recipes || recipes.length === 0) return;
+    this.ingredientQuantitiesSignal.update((items) =>
+      items.map((q) => {
+        if (!q.recipe) {
+          const found = recipes.find((r) => r.id === q.recipeId) ?? null;
+          q.recipe = found;
+        }
+        return q;
+      }),
+    );
+  }
+
   deleteRecipe(id: number): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -522,6 +615,24 @@ export class CatalogStore {
     this.recipesSignal.update(recipes => recipes.map(recipe => this.assignTypeToRecipe(recipe)));
   }
 
+
+  deleteIngredientQuantity(id: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .deleteIngredientQuantity(id)
+      .pipe(retry(2))
+      .subscribe({
+        next: () => {
+          this.ingredientQuantitiesSignal.update((items) => items.filter((q) => q.id !== id));
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to delete ingredient quantity'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
 
   private formatError(error: any, fallback: string): string {
     if (error instanceof Error) {
