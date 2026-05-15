@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <mat-form-field>
+    <mat-label>Title</mat-label>
+    <input matInput formControlName="title" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <input matInput formControlName="description" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Instructions URL</mat-label>
+    <input matInput formControlName="urlInstructions" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Type</mat-label>
+    <mat-select formControlName="recipeTypeId">
+      <mat-option *ngFor="let t of store.types()" [value]="t.id">{{ t.name }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Total Nutrients</mat-label>
+    <mat-select formControlName="totalNutrientsId">
+      <mat-option *ngFor="let n of store.nutrients()" [value]="n.id">{{ n.id }} - {{ n.calories }} cal</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" type="submit">{{ isEdit ? 'Save' : 'Create' }}</button>
+</form>

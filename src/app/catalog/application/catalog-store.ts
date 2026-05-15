@@ -4,6 +4,7 @@ import { computed, Signal, signal } from '@angular/core';
 import { Category } from '../domain/model/category.entity';
 import { Type } from '../domain/model/type.entity';
 import { Nutrient } from '../domain/model/nutrient.entity';
+import { Recipe } from '../domain/model/recipe.entity';
 import { CatalogApi } from '../infrastructure/catalog-api';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { retry } from 'rxjs';
@@ -15,10 +16,12 @@ export class CatalogStore {
   private readonly categoriesSignal = signal<Category[]>([]);
   private readonly typesSignal = signal<Type[]>([]);
   private readonly nutrientsSignal = signal<Nutrient[]>([]);
+  private readonly recipesSignal = signal<Recipe[]>([]);
 
   readonly categories = this.categoriesSignal.asReadonly();
   readonly types = this.typesSignal.asReadonly();
   readonly nutrients = this.nutrientsSignal.asReadonly();
+  readonly recipes = this.recipesSignal.asReadonly();
 
   private readonly loadingSignal = signal<boolean>(false);
   readonly loading = this.loadingSignal.asReadonly();
@@ -29,11 +32,13 @@ export class CatalogStore {
   readonly categoryCount = computed(() => this.categories().length);
   readonly typeCount = computed(() => this.types().length);
   readonly nutrientCount = computed(() => this.nutrients().length);
+  readonly recipeCount = computed(() => this.recipes().length);
 
   constructor(private catalogApi: CatalogApi) {
     this.loadCategories();
     this.loadTypes();
     this.loadNutrients();
+    this.loadRecipes();
   }
 
   /**
@@ -51,6 +56,10 @@ export class CatalogStore {
 
   getTypeById(id: number | null | undefined): Signal<Type | undefined> {
     return computed(() => (id ? this.types().find((c) => c.id === id) : undefined));
+  }
+
+  getRecipeById(id: number | null | undefined): Signal<Recipe | undefined> {
+    return computed(() => (id ? this.recipes().find((c) => c.id === id) : undefined));
   }
 
   /**
@@ -248,6 +257,24 @@ export class CatalogStore {
       });
   }
 
+  addRecipe(recipe: Recipe): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .createRecipe(recipe)
+      .pipe(retry(2))
+      .subscribe({
+        next: (createdRecipe) => {
+          this.recipesSignal.update((recipes) => [...recipes, createdRecipe]);
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to create recipe'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
   /**
    * Updates an existing nutrient.
    * @param updatedNutrient - The nutrient to update.
@@ -268,6 +295,24 @@ export class CatalogStore {
         },
         error: (err) => {
           this.errorSignal.set(this.formatError(err, 'Failed to update nutrient'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
+  updateRecipe(updatedRecipe: Recipe): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .updateRecipe(updatedRecipe)
+      .pipe(retry(2))
+      .subscribe({
+        next: (recipe) => {
+          this.recipesSignal.update((recipes) => recipes.map((c) => (c.id === recipe.id ? recipe : c)));
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to update recipe'));
           this.loadingSignal.set(false);
         },
       });
@@ -310,6 +355,43 @@ export class CatalogStore {
         },
         error: (err) => {
           this.errorSignal.set(this.formatError(err, 'Failed to load nutrients'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
+  deleteRecipe(id: number): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .deleteRecipe(id)
+      .pipe(retry(2))
+      .subscribe({
+        next: () => {
+          this.recipesSignal.update((recipes) => recipes.filter((c) => c.id !== id));
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to delete recipe'));
+          this.loadingSignal.set(false);
+        },
+      });
+  }
+
+  private loadRecipes(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.catalogApi
+      .getRecipes()
+      .pipe(takeUntilDestroyed())
+      .subscribe({
+        next: (recipes) => {
+          console.log(recipes);
+          this.recipesSignal.set(recipes);
+          this.loadingSignal.set(false);
+        },
+        error: (err) => {
+          this.errorSignal.set(this.formatError(err, 'Failed to load recipes'));
           this.loadingSignal.set(false);
         },
       });

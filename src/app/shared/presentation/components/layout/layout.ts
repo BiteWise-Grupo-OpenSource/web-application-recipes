@@ -29,5 +29,6 @@ export class Layout {
     { link: '/catalog/categories', label: 'option.categories' },
     { link: '/catalog/types', label: 'option.types' },
     { link: '/catalog/nutrients', label: 'option.nutrients' },
+    { link: '/catalog/recipes', label: 'option.recipes' },
   ];
 }

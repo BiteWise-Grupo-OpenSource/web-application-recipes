@@ -3,10 +3,12 @@ import { BaseApi } from '../../shared/infrastructure/base-api';
 import { Type } from '../domain/model/type.entity';
 import { Category } from '../domain/model/category.entity';
 import { Nutrient } from '../domain/model/nutrient.entity';
+import { Recipe } from '../domain/model/recipe.entity';
 import { HttpClient } from '@angular/common/http';
 import { TypesApiEndpoint } from './types-api-endpoint';
 import { CategoriesApiEndpoint } from './categories-api-endpoint';
 import { NutrientsApiEndpoint } from './nutrients-api-endpoint';
+import { RecipesApiEndpoint } from './recipes-api-endpoint';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -16,12 +18,14 @@ export class CatalogApi extends BaseApi {
   private readonly typesEndpoint: TypesApiEndpoint;
   private readonly categoriesEndpoint: CategoriesApiEndpoint;
   private readonly nutrientsEndpoint: NutrientsApiEndpoint;
+  private readonly recipesEndpoint: RecipesApiEndpoint;
 
   constructor(http: HttpClient) {
     super();
     this.typesEndpoint = new TypesApiEndpoint(http);
     this.categoriesEndpoint = new CategoriesApiEndpoint(http);
     this.nutrientsEndpoint = new NutrientsApiEndpoint(http);
+    this.recipesEndpoint = new RecipesApiEndpoint(http);
   }
 
   /**
@@ -175,5 +179,28 @@ export class CatalogApi extends BaseApi {
    */
   deleteNutrient(id: number): Observable<void> {
     return this.nutrientsEndpoint.delete(id);
+  }
+
+  /**
+   * Recipes endpoints
+   */
+  getRecipes(): Observable<Recipe[]> {
+    return this.recipesEndpoint.getAll();
+  }
+
+  getRecipe(id: number): Observable<Recipe> {
+    return this.recipesEndpoint.getById(id);
+  }
+
+  createRecipe(recipe: Recipe): Observable<Recipe> {
+    return this.recipesEndpoint.create(recipe);
+  }
+
+  updateRecipe(recipe: Recipe): Observable<Recipe> {
+    return this.recipesEndpoint.update(recipe, recipe.id);
+  }
+
+  deleteRecipe(id: number): Observable<void> {
+    return this.recipesEndpoint.delete(id);
   }
 }
