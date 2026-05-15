@@ -389,6 +389,7 @@ export class CatalogStore {
           console.log(recipes);
           this.recipesSignal.set(recipes);
           this.loadingSignal.set(false);
+          this.assignTypesToRecipe();
         },
         error: (err) => {
           this.errorSignal.set(this.formatError(err, 'Failed to load recipes'));
@@ -396,6 +397,18 @@ export class CatalogStore {
         },
       });
   }
+
+  private assignTypeToRecipe(recipe: Recipe): Recipe {
+    const typeId = recipe.recipeTypeId ?? 0;
+    recipe.type = typeId ? this.getTypeById(typeId)() ?? null: null;
+    return recipe;
+  }
+
+  private assignTypesToRecipe(): void {
+    this.recipesSignal.update(recipes => recipes.map(recipe => this.assignTypeToRecipe(recipe)));
+  }
+
+
   private formatError(error: any, fallback: string): string {
     if (error instanceof Error) {
       return error.message.includes('Resource not found')

@@ -1,4 +1,5 @@
 import { BaseEntity } from '../../../shared/infrastructure/base-entity';
+import { Type } from './type.entity';
 
 export class Recipe implements BaseEntity {
   private _id: number;
@@ -8,6 +9,8 @@ export class Recipe implements BaseEntity {
   private _recipeTypeId: number;
   private _totalNutrientsId: number;
 
+  private _type: Type | null;
+
   constructor(recipe: {
     id: number;
     title: string;
@@ -15,6 +18,8 @@ export class Recipe implements BaseEntity {
     urlInstructions: string;
     recipeTypeId: number;
     totalNutrientsId: number;
+
+    type?: Type | null;
   }) {
     this._id = recipe.id;
     this._title = recipe.title;
@@ -22,6 +27,7 @@ export class Recipe implements BaseEntity {
     this._urlInstructions = recipe.urlInstructions;
     this._recipeTypeId = recipe.recipeTypeId;
     this._totalNutrientsId = recipe.totalNutrientsId;
+    this._type = recipe.type ?? null;
   }
 
   get id(): number {
@@ -64,5 +70,13 @@ export class Recipe implements BaseEntity {
   }
   set totalNutrientsId(value: number) {
     this._totalNutrientsId = value;
+  }
+
+  get type(): Type | null {
+    return this._type;
+  }
+
+  set type(value: Type | null) {
+    this._type = value;
   }
 }
