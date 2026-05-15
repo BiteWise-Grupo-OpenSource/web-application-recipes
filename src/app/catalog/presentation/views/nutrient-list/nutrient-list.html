@@ -1,0 +1,53 @@
+@if (store.loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+}
+@if (store.error()) {
+  <mat-error>{{ store.error() }}</mat-error>
+}
+<table mat-table [dataSource]="store.nutrients()" class="mat-elevation-z8">
+  <!-- ID Column -->
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let nutrient"> {{ nutrient.id }} </td>
+  </ng-container>
+
+  <!-- Calories Column -->
+  <ng-container matColumnDef="calories">
+    <th mat-header-cell *matHeaderCellDef> Calories </th>
+    <td mat-cell *matCellDef="let nutrient"> {{ nutrient.calories }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="carbs">
+    <th mat-header-cell *matHeaderCellDef> Carbs </th>
+    <td mat-cell *matCellDef="let nutrient"> {{ nutrient.carbs }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="proteins">
+    <th mat-header-cell *matHeaderCellDef> proteins </th>
+    <td mat-cell *matCellDef="let nutrient"> {{ nutrient.proteins }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="fats">
+    <th mat-header-cell *matHeaderCellDef> Fats </th>
+    <td mat-cell *matCellDef="let nutrient"> {{ nutrient.fats }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="description">
+    <th mat-header-cell *matHeaderCellDef> Description </th>
+    <td mat-cell *matCellDef="let nutrient"> {{ nutrient.description }} </td>
+  </ng-container>
+
+  <!-- Actions Column -->
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let nutrient">
+      <button mat-button (click)="editNutrient(nutrient.id)">Edit</button>
+      <button mat-button (click)="deleteNutrient(nutrient.id)">Delete</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<button mat-raised-button color="primary" (click)="router.navigate(['catalog/nutrients/new'])">Add Nutrient</button>

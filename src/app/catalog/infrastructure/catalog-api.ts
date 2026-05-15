@@ -2,9 +2,11 @@ import { Injectable } from '@angular/core';
 import { BaseApi } from '../../shared/infrastructure/base-api';
 import { Type } from '../domain/model/type.entity';
 import { Category } from '../domain/model/category.entity';
+import { Nutrient } from '../domain/model/nutrient.entity';
 import { HttpClient } from '@angular/common/http';
 import { TypesApiEndpoint } from './types-api-endpoint';
 import { CategoriesApiEndpoint } from './categories-api-endpoint';
+import { NutrientsApiEndpoint } from './nutrients-api-endpoint';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -13,11 +15,13 @@ import { Observable } from 'rxjs';
 export class CatalogApi extends BaseApi {
   private readonly typesEndpoint: TypesApiEndpoint;
   private readonly categoriesEndpoint: CategoriesApiEndpoint;
+  private readonly nutrientsEndpoint: NutrientsApiEndpoint;
 
   constructor(http: HttpClient) {
     super();
     this.typesEndpoint = new TypesApiEndpoint(http);
     this.categoriesEndpoint = new CategoriesApiEndpoint(http);
+    this.nutrientsEndpoint = new NutrientsApiEndpoint(http);
   }
 
   /**
@@ -131,5 +135,45 @@ export class CatalogApi extends BaseApi {
    */
   deleteType(id: number): Observable<void> {
     return this.typesEndpoint.delete(id);
+  }
+
+  getNutrients(): Observable<Nutrient[]> {
+    return this.nutrientsEndpoint.getAll();
+  }
+
+  /**
+   * Retrieves a single nutrient by ID.
+   * @param id - The ID of the nutrient.
+   * @returns An Observable of the Nutrient object.
+   */
+  getNutrient(id: number): Observable<Nutrient> {
+    return this.nutrientsEndpoint.getById(id);
+  }
+
+  /**
+   * Creates a new nutrient.
+   * @param nutrient - The nutrient to create.
+   * @returns An Observable of the created Nutrient object.
+   */
+  createNutrient(nutrient: Nutrient): Observable<Nutrient> {
+    return this.nutrientsEndpoint.create(nutrient);
+  }
+
+  /**
+   * Updates an existing nutrient.
+   * @param nutrient - The nutrient to update.
+   * @returns An Observable of the updated Nutrient object.
+   */
+  updateNutrient(nutrient: Nutrient): Observable<Nutrient> {
+    return this.nutrientsEndpoint.update(nutrient, nutrient.id);
+  }
+
+  /**
+   * Deletes a nutrient by ID.
+   * @param id - The ID of the nutrient to delete.
+   * @returns An Observable of void.
+   */
+  deleteNutrient(id: number): Observable<void> {
+    return this.nutrientsEndpoint.delete(id);
   }
 }
