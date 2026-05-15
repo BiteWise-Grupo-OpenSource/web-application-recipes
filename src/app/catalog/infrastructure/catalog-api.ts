@@ -4,11 +4,13 @@ import { Type } from '../domain/model/type.entity';
 import { Category } from '../domain/model/category.entity';
 import { Nutrient } from '../domain/model/nutrient.entity';
 import { Recipe } from '../domain/model/recipe.entity';
+import { Ingredient } from '../domain/model/ingredient.entity';
 import { HttpClient } from '@angular/common/http';
 import { TypesApiEndpoint } from './types-api-endpoint';
 import { CategoriesApiEndpoint } from './categories-api-endpoint';
 import { NutrientsApiEndpoint } from './nutrients-api-endpoint';
 import { RecipesApiEndpoint } from './recipes-api-endpoint';
+import { IngredientsApiEndpoint } from './ingredients-api-endpoint';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -19,6 +21,7 @@ export class CatalogApi extends BaseApi {
   private readonly categoriesEndpoint: CategoriesApiEndpoint;
   private readonly nutrientsEndpoint: NutrientsApiEndpoint;
   private readonly recipesEndpoint: RecipesApiEndpoint;
+  private readonly ingredientsEndpoint: IngredientsApiEndpoint;
 
   constructor(http: HttpClient) {
     super();
@@ -26,7 +29,13 @@ export class CatalogApi extends BaseApi {
     this.categoriesEndpoint = new CategoriesApiEndpoint(http);
     this.nutrientsEndpoint = new NutrientsApiEndpoint(http);
     this.recipesEndpoint = new RecipesApiEndpoint(http);
+    this.ingredientsEndpoint = new IngredientsApiEndpoint(http);
   }
+
+  /**
+   * Retrieves all types from the API.
+   * @returns An Observable for an array of Type objects.
+   */
 
   /**
    * Retrieves all types from the API.
@@ -202,5 +211,28 @@ export class CatalogApi extends BaseApi {
 
   deleteRecipe(id: number): Observable<void> {
     return this.recipesEndpoint.delete(id);
+  }
+
+  /**
+   * Ingredients endpoints
+   */
+  getIngredients(): Observable<Ingredient[]> {
+    return this.ingredientsEndpoint.getAll();
+  }
+
+  getIngredient(id: number): Observable<Ingredient> {
+    return this.ingredientsEndpoint.getById(id);
+  }
+
+  createIngredient(ingredient: Ingredient): Observable<Ingredient> {
+    return this.ingredientsEndpoint.create(ingredient);
+  }
+
+  updateIngredient(ingredient: Ingredient): Observable<Ingredient> {
+    return this.ingredientsEndpoint.update(ingredient, ingredient.id);
+  }
+
+  deleteIngredient(id: number): Observable<void> {
+    return this.ingredientsEndpoint.delete(id);
   }
 }

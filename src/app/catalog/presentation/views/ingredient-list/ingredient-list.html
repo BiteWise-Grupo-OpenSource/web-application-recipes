@@ -1,0 +1,40 @@
+@if (store.loading()) {
+  <mat-spinner diameter="40"></mat-spinner>
+}
+@if (store.error()) {
+  <mat-error>{{ store.error() }}</mat-error>
+}
+<table mat-table [dataSource]="store.ingredients()" class="mat-elevation-z8">
+  <ng-container matColumnDef="id">
+    <th mat-header-cell *matHeaderCellDef> ID </th>
+    <td mat-cell *matCellDef="let ingredient"> {{ ingredient.id }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let ingredient"> {{ ingredient.name }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="category">
+    <th mat-header-cell *matHeaderCellDef> Category </th>
+    <td mat-cell *matCellDef="let ingredient"> {{ ingredient.category?.name ?? 'None' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="nutrient">
+    <th mat-header-cell *matHeaderCellDef> Calories </th>
+    <td mat-cell *matCellDef="let ingredient"> {{ ingredient.nutrient?.calories ?? 'N/A' }} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th mat-header-cell *matHeaderCellDef> Actions </th>
+    <td mat-cell *matCellDef="let ingredient">
+      <button mat-button (click)="editIngredient(ingredient.id)">Edit</button>
+      <button mat-button (click)="deleteIngredient(ingredient.id)">Delete</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<button mat-raised-button color="primary" (click)="router.navigate(['catalog/ingredients/new'])">Add Ingredient</button>

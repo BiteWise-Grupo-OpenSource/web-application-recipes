@@ -17,14 +17,14 @@
   <mat-form-field>
     <mat-label>Type</mat-label>
     <mat-select formControlName="recipeTypeId">
-      <mat-option *ngFor="let t of store.types()" [value]="t.id">{{ t.name }}</mat-option>
+      <mat-option *ngFor="let type of store.types()" [value]="type.id">{{ type.name }}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field>
     <mat-label>Total Nutrients</mat-label>
     <mat-select formControlName="totalNutrientsId">
-      <mat-option *ngFor="let n of store.nutrients()" [value]="n.id">{{ n.id }} - {{ n.calories }} cal</mat-option>
+      <mat-option *ngFor="let nutrient of store.nutrients()" [value]="nutrient.id">{{ nutrient.id }} - {{ nutrient.calories }} cal</mat-option>
     </mat-select>
   </mat-form-field>
 

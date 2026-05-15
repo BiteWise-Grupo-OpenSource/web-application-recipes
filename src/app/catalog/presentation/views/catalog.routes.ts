@@ -8,6 +8,8 @@ const nutrientList = () => import('./nutrient-list/nutrient-list').then((m) => m
 const nutrientForm = () => import('./nutrient-form/nutrient-form').then((m) => m.NutrientForm);
 const recipeList = () => import('./recipe-list/recipe-list').then((m) => m.RecipeList);
 const recipeForm = () => import('./recipe-form/recipe-form').then((m) => m.RecipeForm);
+const ingredientList = () => import('./ingredient-list/ingredient-list').then((m) => m.IngredientList);
+const ingredientForm = () => import('./ingredient-form/ingredient-form').then((m) => m.IngredientForm);
 
 export const catalogRoutes: Routes = [
   { path: 'categories', loadComponent: categoryList },
@@ -25,4 +27,8 @@ export const catalogRoutes: Routes = [
   { path: 'recipes', loadComponent: recipeList },
   { path: 'recipes/new', loadComponent: recipeForm },
   { path: 'recipes/edit/:id', loadComponent: recipeForm },
+
+  { path: 'ingredients', loadComponent: ingredientList },
+  { path: 'ingredients/new', loadComponent: ingredientForm },
+  { path: 'ingredients/edit/:id', loadComponent: ingredientForm },
 ];

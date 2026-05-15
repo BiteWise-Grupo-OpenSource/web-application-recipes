@@ -30,5 +30,6 @@ export class Layout {
     { link: '/catalog/types', label: 'option.types' },
     { link: '/catalog/nutrients', label: 'option.nutrients' },
     { link: '/catalog/recipes', label: 'option.recipes' },
+    { link: '/catalog/ingredients', label: 'option.ingredients' },
   ];
 }
